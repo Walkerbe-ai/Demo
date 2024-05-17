@@ -1,0 +1,311 @@
+﻿<Page x:Class="TechnoService.Views.ManagerPanel"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:TechnoService.Views"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:viewmodels="clr-namespace:TechnoService.ViewModels" d:DataContext="{d:DesignInstance Type=viewmodels:ManagerPanelViewModel}"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="ManagerPanel"
+      DataContext="{Binding ManagerPanelViewModel, 
+      Source={StaticResource ViewModelLocator}}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="100" />
+            </Grid.ColumnDefinitions>
+            <Button Command="{Binding LogoutCommand}"  
+                Grid.Column="2"
+                Style="{StaticResource MaterialDesignToolButton}" 
+                Height="50"
+                Width="50" >
+                <StackPanel>
+                    <materialDesign:PackIcon Kind="LogoutVariant" 
+                                         Width="45" 
+                                         Height="45"
+                                         Foreground="#FDBD40"/>
+                </StackPanel>
+            </Button>
+        </Grid>
+        <StackPanel Orientation="Horizontal">
+            <TextBox materialDesign:HintAssist.Hint="Поиск"
+                 materialDesign:TextFieldAssist.UnderlineBrush="#FDBD40"
+                 BorderBrush="#FDBD40"
+                 Text="{Binding SearchOrd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                 FontSize="25"
+                 Width="200"
+                 Foreground="#FDBD40" 
+                 VerticalAlignment="Center" 
+                 Margin="10,0,10,0"/>
+            <Button Content="Назначить исполнителя" 
+                    Style="{StaticResource help}"
+                    Width="200"
+                    FontSize="15"
+                    Height="50"
+                    Command="{Binding AppointEmployeeOrderCommand, IsAsync=True}"/>
+        </StackPanel>
+        <ListView ItemsSource="{Binding CatalogOrder}"
+              Grid.Row="1"
+              ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+              SelectedItem="{Binding SelectedOrder}"
+              HorizontalContentAlignment="Stretch">
+            <ListView.ContextMenu >
+                <ContextMenu >
+                    <MenuItem Header="Редактировать" 
+                          Command="{Binding EditOrderCommand}"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Border Background="#B0E5FD"
+                        CornerRadius="10" 
+                        Margin="0 0 10 0"
+                        HorizontalAlignment="Stretch">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Foreground="White"
+                                   TextWrapping="Wrap"
+                                   Margin="20 10 0 10"
+                                   Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+                                   FontFamily="{StaticResource FontTCM}"
+                                   Text="{Binding IdOrdersNavigation.SerialNumber}" />
+                            <TextBlock Foreground="White"
+                                   TextWrapping="Wrap"
+                                   Margin="20 10 0 10"
+                                   Style="{StaticResource MaterialDesignHeadline4TextBlock}"
+                                   FontFamily="{StaticResource FontTCM}"
+                                   Text="{Binding IdOrdersNavigation.DescriptionApplication}" />
+                        </StackPanel>
+
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+        <materialDesign:DialogHost Panel.ZIndex="2"
+                    IsOpen="{Binding IsDialogEditOrderOpen}"
+                    Identifier="EditOrder" Grid.ColumnSpan="2">
+            <materialDesign:DialogHost.DialogContent >
+                <Grid Margin="20" >
+                    <ScrollViewer>
+                        <StackPanel Orientation="Vertical" 
+                             HorizontalAlignment="Center" 
+                             VerticalAlignment="Center"
+                            Margin="0 0 20 0">
+                            <TextBlock Text="Редактирование заявки"
+                                Margin="0 0 0 5"
+                                FontSize="15"
+                                HorizontalAlignment="Center"
+                                FontFamily="{StaticResource FontTCM}"/>
+                            <DatePicker Grid.Row="1"
+                                SelectedDate="{Binding EditDateAddition, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                Width="265"
+                                Foreground="Black" 
+                                materialDesign:HintAssist.Hint="Дата добавления"
+                                Margin="0 20 0 0"
+                                IsEnabled="False"/>
+                            <TextBox Grid.Row="1"
+                              Width="265"
+                              MaxLength="45"
+                              Foreground="Black"
+                              Text="{Binding EditNameEquipment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              Style="{StaticResource pwsTextBox}"
+                              materialDesign:HintAssist.Hint="Название оборудования"
+                                     IsEnabled="False"/>
+                            <ComboBox Grid.Row="3"
+                              Width="265"
+                              ItemsSource="{Binding TypeProblem,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              DisplayMemberPath="NameTypeProblem"
+                              Foreground="Black"
+                              SelectedItem="{Binding EditIdTypeProblem, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              materialDesign:HintAssist.Hint="Тип проблемы"
+                                      IsEnabled="False"
+                              Margin="0 20 0 0"/>
+                            <TextBox Grid.Row="1"
+                              Width="265"
+                              Foreground="Black"
+                              Text="{Binding EditComment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              Style="{StaticResource pwsTextBox}"
+                              Height="100"
+                              materialDesign:HintAssist.Hint="Комментарий" 
+                              TextWrapping="Wrap"
+                             IsEnabled="False"/>
+                            <ComboBox Grid.Row="3"
+                              Width="265"
+                              ItemsSource="{Binding Status,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              Foreground="Black"
+                              SelectedItem="{Binding EditStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              materialDesign:HintAssist.Hint="Статус"
+                              Margin="0 20 0 0"
+                              MaxDropDownHeight="200"
+                                      IsEnabled="False"/>
+                            <TextBox Grid.Row="1"
+                              Width="265"
+                              MaxLength="45"
+                              Foreground="Black"
+                              Text="{Binding EditNameClient, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              Style="{StaticResource pwsTextBox}"
+                              materialDesign:HintAssist.Hint="Имя клиента" 
+                                     IsEnabled="False"/>
+                            <TextBox Grid.Row="1"
+                              Width="265"
+                              MaxLength="45"
+                              Foreground="Black"
+                              Text="{Binding EditCost, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              Style="{StaticResource pwsTextBox}"
+                              materialDesign:HintAssist.Hint="Цена" 
+                             IsEnabled="False"/>
+                            <DatePicker Grid.Row="1"
+                                SelectedDate="{Binding EditDateEnd, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                Width="265"
+                                Foreground="Black" 
+                                materialDesign:HintAssist.Hint="Дата завершения"
+                                Margin="0 20 0 0"
+                                IsEnabled="False"/>
+                            <materialDesign:TimePicker Width="265"
+                                               Foreground="Black" 
+                                               Margin="0 20 0 0"
+                                               IsEnabled="False"
+                                               SelectedTime="{Binding EditTimeWork, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                            <ComboBox Grid.Row="3"
+                              Width="265"
+                              ItemsSource="{Binding Employee,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              DisplayMemberPath="FullnameUser"
+                              Foreground="Black"
+                              SelectedItem="{Binding EditIdEmployee, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              materialDesign:HintAssist.Hint="Сотрудник"
+                                      IsEnabled="False"
+                              Margin="0 20 0 0"/>
+                            <ComboBox Grid.Row="3"
+                              Width="265"
+                              ItemsSource="{Binding WorkStatus,Mode=OneWay}"
+                              Foreground="Black"
+                              SelectedItem="{Binding EditWorkStatus, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              materialDesign:HintAssist.Hint="Статус работы"
+                              Margin="0 20 0 0"
+                              MaxDropDownHeight="200"
+                              IsEnabled="False"/>
+                            <DatePicker Grid.Row="1"
+                                SelectedDate="{Binding EditPeriodExecution, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                Width="265"
+                                Foreground="Black" 
+                                materialDesign:HintAssist.Hint="Предварительная дата завершения"
+                                Margin="0 20 0 0"/>
+                            <ComboBox Grid.Row="3"
+                              Width="265"
+                              ItemsSource="{Binding TypeEquipment,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              DisplayMemberPath="NameTypeEquipment"
+                              Foreground="Black"
+                              SelectedItem="{Binding EditIdTypeEquipment, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              materialDesign:HintAssist.Hint="Тип оборудования"
+                                      IsEnabled="False"
+                              Margin="0 20 0 0"
+                              MaxDropDownHeight="200"/>
+                            <TextBox Grid.Row="1"
+                              Width="265"
+                              MaxLength="45"
+                              Foreground="Black"
+                              Text="{Binding EditNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              Style="{StaticResource pwsTextBox}"
+                              materialDesign:HintAssist.Hint="Серийный номер" 
+                                     IsEnabled="False"/>
+                            <TextBox Grid.Row="1"
+                              Width="265"
+                              Foreground="Black"
+                              Text="{Binding EditDescription, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              Style="{StaticResource pwsTextBox}"
+                              Height="100"
+                              materialDesign:HintAssist.Hint="Описание" 
+                                    IsEnabled="False"
+                              TextWrapping="Wrap"/>
+                            <StackPanel Orientation="Horizontal" 
+                                Grid.Row="7" 
+                                HorizontalAlignment="Center" 
+                                Margin="0,20,0,0">
+                                <Button Content="Сохранить"
+                                 Command="{Binding SaveCurrentOrderCommand, IsAsync=True}"
+                                 Style="{StaticResource help}"
+                                 Width="150"
+                                 Height="30"
+                                 Margin="0 0 10 0"/>
+                                <Button Grid.Row="4"
+                                 Content="Отмена"
+                                 Width="50"
+                                 Height="30"
+                                 Style="{StaticResource help}"
+                                 Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                                 Margin="0 0 10 0"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                </Grid>
+            </materialDesign:DialogHost.DialogContent>
+        </materialDesign:DialogHost>
+        <materialDesign:DialogHost Panel.ZIndex="2"
+            IsOpen="{Binding IsDialogAppointEmployeeOrderOpen}"
+            Identifier="AppointEmployeeOrder" Grid.ColumnSpan="2">
+            <materialDesign:DialogHost.DialogContent >
+                <Grid Margin="20" >
+                    <ScrollViewer>
+                        <StackPanel Orientation="Vertical" 
+                     HorizontalAlignment="Center" 
+                     VerticalAlignment="Center"
+                    Margin="0 0 20 0">
+                            <TextBlock Text="Назначение исполнителя к заявке"
+                                        Margin="0 0 0 5"
+                                        FontSize="15"
+                                        HorizontalAlignment="Center"
+                                        FontFamily="{StaticResource FontTCM}"/>
+                            
+                            
+                            <ComboBox Grid.Row="3"
+                                      Width="265"
+                                      ItemsSource="{Binding Orders,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      DisplayMemberPath="DescriptionApplication"
+                                      Foreground="Black"
+                                      SelectedItem="{Binding SelectOrder, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      materialDesign:HintAssist.Hint="Заявка"
+                                      Margin="0 20 0 0"/>
+                            <ComboBox Grid.Row="3"
+                                      Width="265"
+                                      ItemsSource="{Binding Employee,Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      Foreground="Black"
+                                      SelectedItem="{Binding SelectedEmployee, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      materialDesign:HintAssist.Hint="Исполнитель"
+                                      Margin="0 20 0 0"
+                                      MaxDropDownHeight="200"
+                                      DisplayMemberPath="FullnameUser"/>
+                            <StackPanel Orientation="Horizontal" 
+                                        Grid.Row="7" 
+                                        HorizontalAlignment="Center" 
+                                        Margin="0,20,0,0">
+                                <Button Content="Сохранить"
+                                         Command="{Binding AddCatalogOrderCommand, IsAsync=True}"
+                                         Style="{StaticResource help}"
+                                         Width="150"
+                                         Height="30"
+                                         Margin="0 0 10 0"/>
+                                <Button Grid.Row="4"
+                                         Content="Отмена"
+                                         Width="50"
+                                         Height="30"
+                                         Style="{StaticResource help}"
+                                         Command="{x:Static materialDesign:DialogHost.CloseDialogCommand}"
+                                         Margin="0 0 10 0"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </ScrollViewer>
+
+                </Grid>
+            </materialDesign:DialogHost.DialogContent>
+        </materialDesign:DialogHost>
+    </Grid>
+</Page>
